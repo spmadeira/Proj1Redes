@@ -1,0 +1,33 @@
+<style>
+    button {
+      font-size: 50px;
+      padding: 20px 30px;
+      background-color: #F48FB1;
+      border-radius: 10px;
+      border: 1px dotted black;
+      margin: 0 auto;
+      margin-top: 5%;
+      display: block;
+    }
+    h1 {
+        text-align: center;
+        color: red;
+        font-size: 128;
+        flex-grow: 1;
+    }
+</style>
+
+<script>
+    let counter = 0;
+
+    function count(){
+        counter++;
+        document.getElementById('count_text').innerText = String(counter);
+    }
+</script>
+
+
+<button type="button" onclick="count()">Click Me!</button>
+<div>
+    <h1 id="count_text">0</h1>
+</div>

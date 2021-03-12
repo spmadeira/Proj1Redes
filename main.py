@@ -44,13 +44,12 @@ def parse(http):
     
 def respond(msg):
     if not msg.method == 'GET':
-        print('{0} != GET'.format(msg.method))
         return 'HTTP/1.0 405 Method Not Allowed\ncontent-type: application/problem'.encode()
 
     route = msg.route[1:]
 
     if not route:
-        route = 'Index'
+        route = 'Index.html'
 
     if len(route.split('.')) == 1: # If has no defined file format
         file_name = './View/{0}.html'.format(route)
@@ -59,7 +58,7 @@ def respond(msg):
 
     requested_format = file_name.split('.')[-1]
 
-    if not requested_format in dict.keys(SERVE):
+    if requested_format not in dict.keys(SERVE):
         'HTTP/1.0 500 Internal Server Error\ncontent-type: application/problem'.encode()
 
     if os.path.isfile(file_name):

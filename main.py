@@ -10,7 +10,8 @@ SERVE = dict({
     'ico': 'image/x-icon',
     'jpeg': 'image/jpeg',
     'png': 'image/png',
-    'js': 'text/javascript'
+    'js': 'text/javascript',
+    'css': 'text/css'
 })
 
 class HttpMessage(object):

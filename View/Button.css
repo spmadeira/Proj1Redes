@@ -1,0 +1,20 @@
+button {
+    font-size: 50px;
+    font-family: Consolas,monaco,monospace; 
+    padding: 20px 30px;
+    background-color: #2039a7;
+    color: white;
+    border-radius: 25px;
+    border: 4px groove black;
+    margin: 0 auto;
+    margin-top: 5%;
+    display: block;
+  }
+  
+h1 {
+    text-align: center;
+    color: black;
+    font-size: 128;
+    font-family: Consolas;
+    flex-grow: 1;
+}

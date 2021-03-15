@@ -43,41 +43,47 @@ def parse(http):
 
     
 def respond(msg):
-    if not msg.method == 'GET':
-        return 'HTTP/1.0 405 Method Not Allowed\ncontent-type: application/problem'.encode()
+    try:
+        if not msg.method == 'GET':
+            return 'HTTP/1.0 405 Method Not Allowed\ncontent-type: application/problem'.encode(), 405
 
-    route = msg.route[1:]
+        route = msg.route[1:]
 
-    if not route:
-        route = 'Index.html'
+        if not route:
+            route = 'Index.html'
 
-    if len(route.split('.')) == 1: # If has no defined file format
-        file_name = './View/{0}.html'.format(route)
-    else: 
-        file_name = './View/{0}'.format(route)
+        if len(route.split('.')) == 1: # If has no defined file format
+            file_name = './View/{0}.html'.format(route)
+        else: 
+            file_name = './View/{0}'.format(route)
 
-    requested_format = file_name.split('.')[-1]
+        requested_format = file_name.split('.')[-1]
 
-    if requested_format not in dict.keys(SERVE):
-        'HTTP/1.0 500 Internal Server Error\ncontent-type: application/problem'.encode()
+        if requested_format not in dict.keys(SERVE):
+            raise KeyError
 
-    if os.path.isfile(file_name):
-        try:
+        if os.path.isfile(file_name):
             f = open(file_name, "rb")
             content = f.read()
-            return 'HTTP/1.0 200 OK\ncontent-type: {0}\n\n'.format(SERVE[requested_format]).encode()+content
-        except IOError:
-            return 'HTTP/1.0 500 Internal Server Error\ncontent-type: application/problem'.encode()
-        else:
             f.close()
-    else:
-        return 'HTTP/1.0 404 Not Found\ncontent-type: application/problem\n\nFile Not Found'.encode()
+            return 'HTTP/1.0 200 OK\ncontent-type: {0}\n\n'.format(SERVE[requested_format]).encode()+content, 200
+        else:
+            f = open('./View/NotFound.html', "rb")
+            content = f.read()
+            f.close()
+            return 'HTTP/1.0 404 Not Found\ncontent-type: text/html\n\n'.encode()+content, 404
+    except:
+        f = open('./View/Error.html', "rb")
+        content = f.read()
+        f.close()
+        return 'HTTP/1.0 500 Internal Server Error\ncontent-type: text/html\n\n'.encode()+content, 500
 
 
 def handle_request(req, conn):
     msg = parse(req)
-    print(msg.route)
-    res = respond(msg)
+    print("Received: {0}".format(msg.route))
+    res, code = respond(msg)
+    print("Reponded: {0}".format(code))
     conn.sendall(res)
     conn.close()
 
@@ -92,7 +98,7 @@ print('Listening on port %s ...' % PORT)
 
 while True:
     conn, add = server_socket.accept()
-
+    
     req = conn.recv(1024).decode()
     req_t = Thread(target=handle_request, args=(req,conn))
     req_t.start()
